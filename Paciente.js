@@ -1,20 +1,24 @@
+import {DateTime} from 'luxon'
 
 export class Paciente {
     #cpf;
     #nome;
     #data_nasc;
 
+    get cpf(){
+        return this.#cpf;
+    }
 
     set cpf(novoCpf){
 
         if(novoCpf.length !== 11)
-            throw new Error("CPF inválido");
+            throw new Error("Erro: CPF inválido");
 
         if(!this.#isNumerico(novoCpf))
-            throw new Error("CPF inválido");
+            throw new Error("Erro: CPF inválido");
 
         if (!this.#validaCpf(novoCpf))
-            throw new Error("CPF inválido");
+            throw new Error("Erro: CPF inválido");
             
         this.#cpf = novoCpf; 
     }
@@ -37,7 +41,7 @@ export class Paciente {
 
         const idade = DateTime.now().diff(novaData, "years").years;
         if (idade < 13) {
-            throw new Error("Erro: O cliente deve ter pelo menos 18 anos.");
+            throw new Error("Erro: paciente deve ter pelo menos 13 anos.");
         }
 
         this.#data_nasc = novaData;
