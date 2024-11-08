@@ -1,51 +1,49 @@
-import {DateTime} from 'luxon'
+import { DateTime } from 'luxon';
+import { Paciente } from './Paciente.js';
 
-export class Paciente {
+export class PacienteBuilder {
     #cpf;
     #nome;
     #data_nasc;
 
-    get cpf(){
-        return this.#cpf;
-    }
-
-    set cpf(novoCpf){
+    setCpf(novoCpf){
 
         if(novoCpf.length !== 11)
-            throw new Error("Erro: CPF inválido");
+            return { success: false, error: "Erro: CPF inválido" };
 
         if(!this.#isNumerico(novoCpf))
-            throw new Error("Erro: CPF inválido");
+            return { success: false, error: "Erro: CPF inválido" };
 
         if (!this.#validaCpf(novoCpf))
-            throw new Error("Erro: CPF inválido");
+            return { success: false, error: "Erro: CPF inválido" };
             
         this.#cpf = novoCpf; 
+        return { success: true };
     }
 
-    set nome(novoNome){
+    setNome(novoNome){
         if (novoNome.length < 5)
-            throw new Error("Erro: Nome deve ter pelo menos 5 caracteres");
+            return { success: false, error: "Erro: Nome deve ter pelo menos 5 caracteres" };
         
         this.#nome = novoNome;
-
+        return { success: true };
     }
 
-    set data_nasc(novaData){
+    setData_nasc(novaData){
         // Converte a string para uma data Luxon usando o formato "dd/MM/yyyy"
         novaData = DateTime.fromFormat(novaData, "dd/MM/yyyy");
 
         if (!novaData.isValid) 
-            throw new Error("Erro: Data de nascimento inválida. Formato esperado: DD/MM/AAAA.");
+            return { success: false, error: "Erro: Data de nascimento inválida. Formato esperado: DD/MM/AAAA." };
 
 
         const idade = DateTime.now().diff(novaData, "years").years;
-        if (idade < 13) {
-            throw new Error("Erro: paciente deve ter pelo menos 13 anos.");
-        }
+        if (idade < 13) 
+            return { success: false, error: "Erro: paciente deve ter pelo menos 13 anos."};
+        
 
         this.#data_nasc = novaData;
-
+        return { success: true };
     }
 
     #isNumerico(str){
@@ -89,6 +87,22 @@ export class Paciente {
         
 
         return true;
+    }
+
+    build() {
+        if (!this.#cpf || !this.#nome || !this.#data_nasc) {
+            return {
+                success: false,
+                error: "Erro: faltam dados obrigatórios para criar o paciente."
+            };
+        }
+
+        const paciente = new Paciente();
+        paciente.cpf = this.#cpf;
+        paciente.nome = this.#nome;
+        paciente.data_nasc = this.#data_nasc;
+
+        return { success: true, paciente };
     }
 
 };
