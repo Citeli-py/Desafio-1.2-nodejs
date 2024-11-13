@@ -1,6 +1,6 @@
 import { PacienteController } from '../controllers/PacienteController.js';
 import { ConsultaController } from '../controllers/ConsultaController.js';
-import { View } from './VIew.js';
+import { View } from './View.js';
 
 import promptSync from 'prompt-sync';
 const prompt = promptSync({ sigint: true });
@@ -45,7 +45,7 @@ export class CadastroPacientes extends View {
     }
 
 
-    opcaoCadastrarNovoPaciente() {
+    cadastrarNovoPaciente() {
         console.log("Cadastro de novo paciente:");
         this.pacientes_controller.iniciarNovoPaciente();
 
@@ -58,11 +58,11 @@ export class CadastroPacientes extends View {
         if (resultado.success) {
             console.log("Paciente cadastrado com sucesso!");
         } else {
-            console.log("Erro ao cadastrar paciente:", resultado.error);
+            console.log(resultado.error);
         }
     }
 
-    opcaoExcluirPaciente() {
+    excluirPaciente() {
         const cpf = prompt("CPF: ");
         const resultado = this.pacientes_controller.removePaciente(cpf, this.consultas_controller);
 
@@ -73,12 +73,12 @@ export class CadastroPacientes extends View {
         }
     }
 
-    opcaoListarPacientesOrdenadoPorCpf() {
+    listarPacientesOrdenadoPorCpf() {
         const lista_pacientes = this.pacientes_controller.getPacientesOrdenadosPorCpf(this.consultas_controller);
         console.log(lista_pacientes)
     }
 
-    opcaoListarPacientesOrdenadoPorNome() {
+    listarPacientesOrdenadoPorNome() {
         const lista_pacientes = this.pacientes_controller.getPacientesOrdenadosPorNome(this.consultas_controller);
         console.log(lista_pacientes)
     }
@@ -86,19 +86,19 @@ export class CadastroPacientes extends View {
     processarOpcao(opcao) {
         switch (opcao) {
             case 1:
-                this.opcaoCadastrarNovoPaciente();
+                this.cadastrarNovoPaciente();
                 return { tela: "CadastroPacientes", sair: true};
 
             case 2:
-                this.opcaoExcluirPaciente();
+                this.excluirPaciente();
                 return { tela: "CadastroPacientes", sair: true};
 
             case 3:
-                this.opcaoListarPacientesOrdenadoPorCpf();
+                this.listarPacientesOrdenadoPorCpf();
                 return { tela: "CadastroPacientes", sair: true};
 
             case 4:
-                this.opcaoListarPacientesOrdenadoPorNome();
+                this.listarPacientesOrdenadoPorNome();
                 return { tela: "CadastroPacientes", sair: true};
 
             case 5:
