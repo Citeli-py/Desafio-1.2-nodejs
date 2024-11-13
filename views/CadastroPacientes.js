@@ -69,7 +69,7 @@ export class CadastroPacientes extends View {
         if (resultado.success) {
             console.log("Paciente excluído com sucesso.");
         } else {
-            console.log(resultado.message);
+            console.log(resultado.error);
         }
     }
 
