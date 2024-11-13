@@ -1,66 +1,39 @@
 import {Paciente} from './models/Paciente.js'
-import { Agenda } from './models/Agenda.js'
-import { Consulta } from './models/Consulta.js'
+import { Agenda } from './controllers/Agenda.js'
+import { Menu } from './views/Menu.js';
 
 import promptSync from 'prompt-sync';
+import { CadastroPacientes } from './views/CadastroPacientes.js';
+import { PacienteController } from './controllers/PacienteController.js';
+import { ConsultaController } from './controllers/ConsultaController.js';
 const prompt = promptSync({ sigint: true });
 
+const consulta_controller = new ConsultaController();
+const pacientes_controller = new PacienteController();
+// const cadastro = new CadastroPacientes(pacientes_controller, consulta_controller);
 
+// cadastro.opcaoCadastrarNovoPaciente();
+// cadastro.opcaoCadastrarNovoPaciente();
+// cadastro.opcaoCadastrarNovoPaciente();
 
-var agenda = new Agenda();
+// consulta_controller.iniciarNovaConsulta();
+// console.log(consulta_controller.setCpf('19086839703', pacientes_controller));
+// console.log(consulta_controller.setDataConsulta("13/11/2024"));
+// console.log(consulta_controller.setHoraInicial("1800"));
+// console.log(consulta_controller.setHoraFinal("1830"));
+// console.log(consulta_controller.addConsulta());
 
-// agenda.addPaciente();
-// agenda.addPaciente();
+// console.log(pacientes_controller.getPacientesOrdenadosPorCpf(consulta_controller))
+// console.log(pacientes_controller.getPacientesOrdenadosPorNome(consulta_controller))
 
-// agenda.addConsulta();
+const Telas = { "Menu":               new Menu(),
+                "CadastroPacientes":  new CadastroPacientes(pacientes_controller, consulta_controller),
+                "Fim":                false
+            };
 
-// agenda.removePaciente("16262362754")
+var tela_atual = Telas.Menu;
 
-const capturarEntrada = (mensagem, propriedade, classe) => {
-    let instancia = new classe();
-    var entrada;
-
-    while (true) {
-        try {
-            entrada = prompt(mensagem);
-            instancia[propriedade] = entrada;
-            break
-        } catch (erro) {
-            console.log(erro.message);
-        }
-    }
-
-    return entrada;
-};
-
-import { PacienteBuilder } from './models/PacienteBuilder.js';
-
-const builder = new PacienteBuilder();
-
-const cpfResult = builder.setCpf("19086839703");
-if (!cpfResult.success) {
-    console.log(cpfResult.error); // Notifica o erro na `view`
+while(tela_atual){
+    let proxima_tela= tela_atual.main()
+    tela_atual = Telas[proxima_tela];
 }
-
-const nomeResult = builder.setNome("João Silva");
-if (!nomeResult.success) {
-    console.log(nomeResult.error); // Notifica o erro na `view`
-}
-
-const dataNascResult = builder.setData_nasc("01/01/2000");
-if (!dataNascResult.success) {
-    console.log(dataNascResult.error); // Notifica o erro na `view`
-}
-
-const buildResult = builder.build();
-if (buildResult.success) {
-    const paciente = buildResult.paciente;
-    console.log("Paciente criado com sucesso:", paciente);
-} else {
-    console.log(buildResult.error); // Notifica o erro na `view`
-}
-
-
-import { CadastroPacientes } from './views/CadastroPacientes.js';
-
-new CadastroPacientes().show();
