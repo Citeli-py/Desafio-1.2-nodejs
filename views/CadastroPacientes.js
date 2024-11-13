@@ -29,30 +29,14 @@ export class CadastroPacientes extends View {
     }
 
 
-    #validarEntrada(mensagem, metodo){
-
-        var response = {success: false, error: ""};
-        do {
-            const entrada = prompt(mensagem);
-            response = metodo(entrada);
-
-            if(!response.success)
-                console.log(response.error);
-
-        } while (!response.success);
-
-        return true;
-    }
-
-
     cadastrarNovoPaciente() {
         console.log("Cadastro de novo paciente:");
         this.pacientes_controller.iniciarNovoPaciente();
 
         // Esse wrapper serve para conseguir passar o contexto da instância para o método
-        this.#validarEntrada("CPF: ", (entrada) => this.pacientes_controller.setCpf(entrada));
-        this.#validarEntrada("Nome: ", (entrada) => this.pacientes_controller.setNome(entrada));
-        this.#validarEntrada("Data de nascimento: ", (entrada) => this.pacientes_controller.setData_nasc(entrada));
+        super.validarEntrada("CPF: ", (entrada) => this.pacientes_controller.setCpf(entrada));
+        super.validarEntrada("Nome: ", (entrada) => this.pacientes_controller.setNome(entrada));
+        super.validarEntrada("Data de nascimento: ", (entrada) => this.pacientes_controller.setData_nasc(entrada));
 
         const resultado = this.pacientes_controller.addPaciente();
         if (resultado.success) {
