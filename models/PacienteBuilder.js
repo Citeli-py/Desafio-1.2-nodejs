@@ -89,6 +89,12 @@ export class PacienteBuilder {
         return true;
     }
 
+    clear(){
+        this.#cpf = null;
+        this.#nome = null;
+        this.#data_nasc = null;
+    }
+
     build() {
         if (!this.#cpf || !this.#nome || !this.#data_nasc) {
             return {
@@ -101,6 +107,8 @@ export class PacienteBuilder {
         paciente.cpf = this.#cpf;
         paciente.nome = this.#nome;
         paciente.data_nasc = this.#data_nasc;
+
+        this.clear();
 
         return { success: true, paciente };
     }

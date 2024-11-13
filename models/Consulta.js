@@ -1,3 +1,4 @@
+import { DateTime } from "luxon";
 
 export class Consulta{
     cpf_paciente;

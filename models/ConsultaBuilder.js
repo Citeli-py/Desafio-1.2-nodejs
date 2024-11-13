@@ -1,5 +1,5 @@
 import { DateTime } from 'luxon';
-import { Consulta } from './Consulta';
+import { Consulta } from './Consulta.js';
 
 export class ConsultaBuilder {
     #cpf_paciente;
@@ -7,8 +7,9 @@ export class ConsultaBuilder {
     #hora_inicial;
     #hora_final;
 
-    constructor(cpf_paciente) {
-        this.#cpf_paciente = cpf_paciente;
+    setCpf(cpf){
+        this.#cpf_paciente = cpf;
+        return {success: true}
     }
 
     setDataConsulta(data) {
@@ -88,12 +89,19 @@ export class ConsultaBuilder {
         return { success: true };
     }
 
+    clear(){
+        this.#data_consulta = null;
+        this.#hora_inicial = null;
+        this.#hora_final = null;
+    }
+
     build() {
         if (!this.#cpf_paciente || !this.#data_consulta || !this.#hora_inicial || !this.#hora_final) {
             return { success: false, error: "Erro: faltam dados obrigatórios para criar a consulta." };
         }
 
-        const consulta = new Consulta(this.#cpf_paciente);
+        const consulta = new Consulta();
+        consulta.cpf_paciente = this.#cpf_paciente
         consulta.data_consulta = this.#data_consulta;
         consulta.hora_inicial = this.#hora_inicial;
         consulta.hora_final = this.#hora_final;
