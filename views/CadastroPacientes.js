@@ -63,8 +63,8 @@ export class CadastroPacientes extends View {
     }
 
     opcaoExcluirPaciente() {
-        const cpf = prompt("Digite o CPF do paciente que deseja excluir: ");
-        const resultado = this.pacientes_controller.removePaciente(cpf);
+        const cpf = prompt("CPF: ");
+        const resultado = this.pacientes_controller.removePaciente(cpf, this.consultas_controller);
 
         if (resultado.success) {
             console.log("Paciente excluído com sucesso.");
@@ -74,15 +74,13 @@ export class CadastroPacientes extends View {
     }
 
     opcaoListarPacientesOrdenadoPorCpf() {
-        const pacientes = this.pacientes_controller.getPacientesOrdenadosPorCpf();
-        console.log("Pacientes (ordenado por CPF):");
-        pacientes.forEach(paciente => console.log(`CPF: ${paciente.cpf}, Nome: ${paciente.nome}`));
+        const lista_pacientes = this.pacientes_controller.getPacientesOrdenadosPorCpf(this.consultas_controller);
+        console.log(lista_pacientes)
     }
 
     opcaoListarPacientesOrdenadoPorNome() {
-        const pacientes = this.pacientes_controller.getPacientesOrdenadosPorNome();
-        console.log("Pacientes (ordenado por Nome):");
-        pacientes.forEach(paciente => console.log(`Nome: ${paciente.nome}, CPF: ${paciente.cpf}`));
+        const lista_pacientes = this.pacientes_controller.getPacientesOrdenadosPorNome(this.consultas_controller);
+        console.log(lista_pacientes)
     }
 
     processarOpcao(opcao) {
