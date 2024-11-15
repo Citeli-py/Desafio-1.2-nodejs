@@ -12,10 +12,19 @@ export class PacienteController{
         this.paciente_builder.clear();
     }
 
-    setCpf(cpf){
-
+    validaCpf(cpf){
         if(this.pacientes.has(cpf))
-            return {success: false, error: "Paciente já cadastrado!"}
+            return {success: false, error: "Erro: Paciente já cadastrado!"};
+
+        if(!this.paciente_builder.validaCpf(cpf))
+            return {success: false, error: "Erro: CPF inválido"};
+
+        return { success: true }
+    }
+
+    setCpf(cpf){
+        if(this.pacientes.has(cpf))
+            return {success: false, error: "Erro: Paciente já cadastrado!"}
 
         return this.paciente_builder.setCpf(cpf);
     }
@@ -53,6 +62,13 @@ export class PacienteController{
         consulta_controller.removeConsultasPaciente(cpf);
 
         return { success: true};
+    }
+
+    getPaciente(cpf){
+        if(!this.exists(cpf))
+            return null;
+
+        return this.pacientes.get(cpf);
     }
 
     exists(cpf) {
