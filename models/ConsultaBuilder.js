@@ -111,6 +111,6 @@ export class ConsultaBuilder {
 
     #isAberto(data) {
         const [hora_aberto, hora_fechado] = [8, 19];
-        return data.hour >= hora_aberto && data.hour < hora_fechado;
+        return data.hour >= hora_aberto && data.hour <= hora_fechado;
     }
 }
