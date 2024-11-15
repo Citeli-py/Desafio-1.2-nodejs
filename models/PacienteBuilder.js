@@ -2,11 +2,21 @@ import { DateTime } from 'luxon';
 import { Paciente } from './Paciente.js';
 import { ErrorCodes } from '../utils/Error.js';
 
+/**
+* Builder para criar instâncias da classe Paciente.
+*/
+
 export class PacienteBuilder {
     #cpf;
     #nome;
     #data_nasc;
 
+    /**
+    * Valida se o CPF fornecido é válido.
+    * 
+    * @param {string} cpf - CPF a ser validado.
+    * @returns {boolean} Retorna `true` se o CPF for válido, caso contrário, `false`.
+    */
     validaCpf(cpf){
         if (!this.#validaCodigoCpf(cpf)) 
             return false;
@@ -14,6 +24,12 @@ export class PacienteBuilder {
         return true;
     }
 
+    /**
+    * Define o CPF do paciente.
+    * 
+    * @param {string} novoCpf - CPF do paciente.
+    * @returns {Object} Objeto com a propriedade `success` indicando sucesso ou falha.
+    */
     setCpf(novoCpf){
 
         if (!this.validaCpf(novoCpf)) {
@@ -24,6 +40,12 @@ export class PacienteBuilder {
         return { success: true };
     }
 
+    /**
+    * Valida o nome do paciente.
+    * 
+    * @param {string} nome - Nome a ser validado.
+    * @returns {Object} Objeto com a propriedade `success` indicando sucesso ou falha.
+    */
     validaNome(nome){
         if (nome.length < 5)
             return { success: false, error: ErrorCodes.ERR_NOME_INVALIDO };
@@ -31,6 +53,12 @@ export class PacienteBuilder {
         return {success: true}
     }
 
+    /**
+    * Define o nome do paciente.
+    * 
+    * @param {string} novoNome - Nome do paciente.
+    * @returns {Object} Objeto com a propriedade `success` indicando sucesso ou falha.
+    */
     setNome(novoNome){
         const result = this.validaNome(novoNome);
 
@@ -40,6 +68,12 @@ export class PacienteBuilder {
         return result;
     }
 
+    /**
+    * Define a data de nascimento do paciente.
+    * 
+    * @param {string} novaData - Data de nascimento no formato "dd/MM/yyyy".
+    * @returns {Object} Objeto com a propriedade `success` indicando sucesso ou falha.
+    */
     setData_nasc(novaData){
         // Converte a string para uma data Luxon usando o formato "dd/MM/yyyy"
         novaData = DateTime.fromFormat(novaData, "dd/MM/yyyy");
@@ -57,13 +91,20 @@ export class PacienteBuilder {
         return { success: true };
     }
 
-
+    /**
+    * Limpa os dados armazenados no builder.
+    */
     clear(){
         this.#cpf = null;
         this.#nome = null;
         this.#data_nasc = null;
     }
 
+    /**
+    * Constrói uma instância de Paciente com os dados fornecidos.
+    * 
+    * @returns {Object} Objeto contendo `success` e, em caso de sucesso, o paciente criado.
+    */
     build() {
         if (!this.#cpf || !this.#nome || !this.#data_nasc) {
             return {
@@ -82,10 +123,24 @@ export class PacienteBuilder {
         return { success: true, paciente };
     }
 
+    /**
+    * Verifica se uma string contém apenas números.
+    * 
+    * @param {string} str - String a ser verificada.
+    * @returns {boolean} Retorna `true` se a string for numérica, caso contrário, `false`.
+    * @private
+    */
     #isNumerico(str) {
         return /^\d+$/.test(str);
     }
 
+    /**
+    * Valida o código de um CPF com base nos dígitos verificadores.
+    * 
+    * @param {string} cpf - CPF a ser validado.
+    * @returns {boolean} Retorna `true` se o CPF for válido, caso contrário, `false`.
+    * @private
+    */
     #validaCodigoCpf(cpf) {
         if (!cpf || cpf.length !== 11 || !this.#isNumerico(cpf)) 
             return false;
