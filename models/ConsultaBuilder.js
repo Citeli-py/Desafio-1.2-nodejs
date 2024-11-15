@@ -1,5 +1,6 @@
 import { DateTime } from 'luxon';
 import { Consulta } from './Consulta.js';
+import { ErrorCodes } from "../utils/Error.js";
 
 export class ConsultaBuilder {
     #cpf_paciente;
@@ -17,15 +18,15 @@ export class ConsultaBuilder {
         const hoje = DateTime.now();
 
         if (!novaData.isValid) {
-            return { success: false, error: "Erro: Data inválida. Use o formato DD/MM/AAAA." };
+            return { success: false, error: ErrorCodes.ERR_DATA_CONSULTA_INVALIDA };
         }
 
         if (novaData.diff(hoje.startOf('day'), 'days').days < 0) {
-            return { success: false, error: `Erro: Não se pode marcar uma consulta antes da data de hoje ${hoje.toFormat("dd/MM/yyyy")}` };
+            return { success: false, error: ErrorCodes.ERR_DATA_CONSULTA_ANTERIOR };
         }
 
         if (novaData.diff(hoje.startOf('day'), 'days').days === 0 && !this.#isAberto(hoje)) {
-            return { success: false, error: "Erro: Não é mais possível marcar uma consulta hoje, horário de funcionamento das 08:00h às 19:00h" };
+            return { success: false, error: ErrorCodes.ERR_DATA_CONSULTA_HOJE_FECHADO };
         }
 
         this.#data_consulta = novaData;
@@ -34,25 +35,25 @@ export class ConsultaBuilder {
 
     setHoraInicial(horaInicial) {
         if (!this.#data_consulta) {
-            return { success: false, error: "Erro: sem data de consulta!" };
+            return { success: false, error: ErrorCodes.ERR_HORA_SEM_DATA_CONSULTA };
         }
 
         const novaHoraInicial = DateTime.fromFormat(horaInicial, "HHmm");
         if (!novaHoraInicial.isValid) {
-            return { success: false, error: "Erro: Esse formato de hora não é válido!" };
+            return { success: false, error: ErrorCodes.ERR_HORA_INVALIDA};
         }
 
         if (novaHoraInicial.minute % 15 !== 0) {
-            return { success: false, error: "Erro: As consultas só podem ser marcadas de 15 em 15 minutos" };
+            return { success: false, error: ErrorCodes.ERR_HORA_HORARIO_INVALIDO };
         }
 
         if (!this.#isAberto(novaHoraInicial) || novaHoraInicial.hour >= 19) {
-            return { success: false, error: "Erro: O horário de funcionamento é das 08:00h às 19:00h" };
+            return { success: false, error: ErrorCodes.ERR_HORA_HORARIO_FECHADO };
         }
 
         const agora = DateTime.now();
         if (this.#data_consulta.diff(agora.startOf('day'), 'days').days === 0 && novaHoraInicial.diff(agora, 'hours').hours < 0) {
-            return { success: false, error: `Erro: Não é possível agendar horário antes das ${agora.toFormat("HH:mm")}h` };
+            return { success: false, error: ErrorCodes.ERR_HORA_PASSADA };
         }
 
         this.#hora_inicial = novaHoraInicial;
@@ -61,28 +62,28 @@ export class ConsultaBuilder {
 
     setHoraFinal(horaFinal) {
         if (!this.#data_consulta) {
-            return { success: false, error: "Erro: sem data de consulta!" };
+            return { success: false, error: ErrorCodes.ERR_HORA_SEM_DATA_CONSULTA };
         }
 
         if (!this.#hora_inicial) {
-            return { success: false, error: "Erro: sem hora inicial da consulta!" };
+            return { success: false, error: ErrorCodes.ERR_HORA_SEM_HORA_INICIAL};
         }
 
         const novaHoraFinal = DateTime.fromFormat(horaFinal, "HHmm");
         if (!novaHoraFinal.isValid) {
-            return { success: false, error: "Erro: Esse formato de hora não é válido!" };
+            return { success: false, error: ErrorCodes.ERR_HORA_INVALIDA};
         }
 
         if (novaHoraFinal.minute % 15 !== 0) {
-            return { success: false, error: "Erro: As consultas só podem ser marcadas de 15 em 15 minutos" };
+            return { success: false, error: ErrorCodes.ERR_HORA_HORARIO_INVALIDO };
         }
 
         if (!this.#isAberto(novaHoraFinal)) {
-            return { success: false, error: "Erro: O horário de funcionamento é das 08:00h às 19:00h" };
+            return { success: false, error: ErrorCodes.ERR_HORA_HORARIO_FECHADO };
         }
 
         if (novaHoraFinal <= this.#hora_inicial) {
-            return { success: false, error: "Erro: Hora final deve ser maior que a hora inicial!" };
+            return { success: false, error: ErrorCodes.ERR_HORA_FINAL_ANTES_INICIAL};
         }
 
         this.#hora_final = novaHoraFinal;
@@ -97,7 +98,7 @@ export class ConsultaBuilder {
 
     build() {
         if (!this.#cpf_paciente || !this.#data_consulta || !this.#hora_inicial || !this.#hora_final) {
-            return { success: false, error: "Erro: faltam dados obrigatórios para criar a consulta." };
+            return { success: false, error: ErrorCodes.ERR_CONSULTA_INCOMPLETA };
         }
 
         const consulta = new Consulta();

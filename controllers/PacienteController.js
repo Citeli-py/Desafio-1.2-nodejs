@@ -1,5 +1,6 @@
 import {PacienteBuilder} from "../models/PacienteBuilder.js"
 import { DateTime } from "luxon";
+import { ErrorCodes } from "../utils/Error.js";
 
 export class PacienteController{
 
@@ -14,17 +15,17 @@ export class PacienteController{
 
     validaCpf(cpf){
         if(this.pacientes.has(cpf))
-            return {success: false, error: "Erro: Paciente já cadastrado!"};
+            return {success: false, error: ErrorCodes.ERR_CPF_DUPLICADO};
 
         if(!this.paciente_builder.validaCpf(cpf))
-            return {success: false, error: "Erro: CPF inválido"};
+            return {success: false, error: ErrorCodes.ERR_CPF_INVALIDO};
 
         return { success: true }
     }
 
     setCpf(cpf){
         if(this.pacientes.has(cpf))
-            return {success: false, error: "Erro: Paciente já cadastrado!"}
+            return {success: false, error: ErrorCodes.ERR_CPF_DUPLICADO}
 
         return this.paciente_builder.setCpf(cpf);
     }
@@ -52,11 +53,11 @@ export class PacienteController{
         
         // VErifica se o paciente já existe
         if (!this.pacientes.has(cpf)) 
-            return { success: false, error: "Erro: paciente não cadastrado" };
+            return { success: false, error: ErrorCodes.ERR_PACIENTE_NAO_CADASTRADO };
         
         // Verifica se o paciente possui agendamentos futuros
         if(consulta_controller.hasAgendamentosFuturos(cpf))
-            return { success: false, error: "Erro: paciente está agendado." };
+            return { success: false, error: ErrorCodes.ERR_PACIENTE_AGENDADO };
         
         this.pacientes.delete(cpf);
         consulta_controller.removeConsultasPaciente(cpf);

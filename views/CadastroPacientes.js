@@ -34,15 +34,15 @@ export class CadastroPacientes extends View {
         this.pacientes_controller.iniciarNovoPaciente();
 
         // Esse wrapper serve para conseguir passar o contexto da instância para o método
-        super.validarEntrada("CPF: ", (entrada) => this.pacientes_controller.setCpf(entrada));
-        super.validarEntrada("Nome: ", (entrada) => this.pacientes_controller.setNome(entrada));
-        super.validarEntrada("Data de nascimento: ", (entrada) => this.pacientes_controller.setData_nasc(entrada));
+        super.validarEntradaLoop("CPF: ", (entrada) => this.pacientes_controller.setCpf(entrada));
+        super.validarEntradaLoop("Nome: ", (entrada) => this.pacientes_controller.setNome(entrada));
+        super.validarEntradaLoop("Data de nascimento: ", (entrada) => this.pacientes_controller.setData_nasc(entrada));
 
         const resultado = this.pacientes_controller.addPaciente();
         if (resultado.success) {
             console.log("Paciente cadastrado com sucesso!");
         } else {
-            console.log(resultado.error);
+            this.processarErros(resultado.error);
         }
     }
 
@@ -53,7 +53,7 @@ export class CadastroPacientes extends View {
         if (resultado.success) {
             console.log("Paciente excluído com sucesso.");
         } else {
-            console.log(resultado.error);
+            this.processarErros(resultado.error);
         }
     }
 

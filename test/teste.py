@@ -2,7 +2,7 @@ import time
 import pyautogui
 
 # Função para simular as entradas de teclado
-def simular_entrada(entradas, delay_entre_teclas=0.01, delay_entre_entradas=0.1):
+def simular_entrada(entradas, delay_entre_teclas=0.01, delay_entre_entradas=0.2):
     """
     Simula a digitação das entradas fornecidas.
 

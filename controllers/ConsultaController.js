@@ -1,5 +1,6 @@
 import { ConsultaBuilder } from "../models/ConsultaBuilder.js";
 import { DateTime } from "luxon";
+import { ErrorCodes } from "../utils/Error.js";
 
 export class ConsultaController{
 
@@ -17,7 +18,7 @@ export class ConsultaController{
 
     setCpf(cpf, paciente_controller){
         if(!paciente_controller.exists(cpf))
-            return {success: false, error: "Erro: paciente não cadastrado"};
+            return {success: false, error: ErrorCodes.ERR_PACIENTE_NAO_CADASTRADO};
 
 
         return this.consulta_builder.setCpf(cpf)
@@ -52,7 +53,7 @@ export class ConsultaController{
     removeConsulta(cpf, data_consulta, hora_inicial){
 
         if(!this.consultas.has(cpf))
-            return {success: false, error: "Erro: paciente não cadastrado"};
+            return {success: false, error: ErrorCodes.ERR_PACIENTE_NAO_CADASTRADO};
 
         const consultas_paciente = this.consultas.get(cpf);
 
@@ -63,13 +64,13 @@ export class ConsultaController{
             }
         }
 
-        return {success: false, error: "Erro: agendamento não encontrado"};
+        return {success: false, error: ErrorCodes.ERR_CONSULTA_NAO_ENCONTRADA};
     }
 
     removeConsultasPaciente(cpf){
 
         if(!this.consultas.has(cpf))
-            return {success: false, error: "Erro: paciente não cadastrado"};
+            return {success: false, error: ErrorCodes.ERR_PACIENTE_NAO_CADASTRADO};
 
         this.consultas.delete(cpf);
         return {success: true};
@@ -87,7 +88,7 @@ export class ConsultaController{
 
     getAgendamentosFuturos(cpf){
         if(!this.consultas.has(cpf))
-            return {success: false, error: "Paciente não possui agendamentos"};
+            return {success: false, error: ErrorCodes.ERR_PACIENTE_NAO_CADASTRADO};
 
         // Verifica se o paciente possui agendamentos futuros
         const consultas_paciente = this.consultas.get(cpf);
@@ -163,7 +164,7 @@ export class ConsultaController{
         const HoraInicial = DateTime.fromFormat(hora_inicial, "HHmm");
 
         if (!HoraInicial.isValid) {
-            return { success: false, error: "Erro: hora inválida. use o formato HHMM!" };
+            return { success: false, error: ErrorCodes.ERR_HORA_INVALIDA};
         }
 
         return { success: true };
@@ -173,14 +174,14 @@ export class ConsultaController{
         const Data = DateTime.fromFormat(data, "dd/MM/yyyy");
 
         if (!Data.isValid) {
-            return { success: false, error: "Erro: Data inválida. Use o formato DD/MM/AAAA." };
+            return { success: false, error: ErrorCodes.ERR_DATA_CONSULTA_INVALIDA };
         }
 
         if(data_inicial){
             const DataInicial = DateTime.fromFormat(data_inicial, "dd/MM/yyyy");
 
             if(Data.diff(DataInicial, ['days']) < 0)
-                return { success: false, error: "Erro: Data final menor que a inicial." };
+                return { success: false, error: ErrorCodes.ERR_DATA_FINAL_MENOR_INICIAL };
         }
 
         return { success: true };
