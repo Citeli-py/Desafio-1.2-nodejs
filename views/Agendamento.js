@@ -2,10 +2,7 @@ import { View } from "./View.js";
 import { PacienteController } from "../controllers/PacienteController.js";
 import { ConsultaController } from "../controllers/ConsultaController.js";
 
-import promptSync from 'prompt-sync';
 import { ErrorCodes } from "../utils/Error.js";
-const prompt = promptSync({ sigint: true });
-
 
 export class Agendamento extends View{
 
