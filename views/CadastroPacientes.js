@@ -58,7 +58,7 @@ export class CadastroPacientes extends View {
 
         const resultado = this.pacientes_controller.addPaciente();
         if (resultado.success) {
-            console.log("Paciente cadastrado com sucesso!");
+            console.log("\nPaciente cadastrado com sucesso!");
         } else {
             this.processarErros(resultado.error);
         }
@@ -73,7 +73,7 @@ export class CadastroPacientes extends View {
         const resultado = this.pacientes_controller.removePaciente(cpf, this.consultas_controller);
 
         if (resultado.success) {
-            console.log("Paciente excluído com sucesso.");
+            console.log("\nPaciente excluído com sucesso.");
         } else {
             this.processarErros(resultado.error);
         }
@@ -119,7 +119,6 @@ export class CadastroPacientes extends View {
                 return { tela: "CadastroPacientes", sair: true};
 
             case 5:
-                console.log("Voltando para o menu principal...");
                 return { tela: "Menu", sair: true};
 
             default:
