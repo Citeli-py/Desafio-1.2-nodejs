@@ -15,7 +15,7 @@ export class ConsultaBuilder {
     /**
     * Define o CPF do paciente.
     * @param {string} cpf - O CPF do paciente.
-    * @returns {Object} Um objeto indicando sucesso ou erro.
+    * @returns {{success: boolean}} Um objeto indicando sucesso ou erro.
     */
 
     setCpf(cpf){
@@ -26,7 +26,7 @@ export class ConsultaBuilder {
     /**
     * Define a data da consulta.
     * @param {string} data - A data da consulta no formato "dd/MM/yyyy".
-    * @returns {Object} Um objeto indicando sucesso ou erro.
+    * @returns {{success: boolean, error?: Number}} Um objeto indicando sucesso ou erro.
     */
     setDataConsulta(data) {
         const novaData = DateTime.fromFormat(data, "dd/MM/yyyy");
@@ -51,7 +51,7 @@ export class ConsultaBuilder {
     /**
     * Define o horário inicial da consulta.
     * @param {string} horaInicial - O horário inicial no formato "HHmm".
-    * @returns {Object} Um objeto indicando sucesso ou erro.
+    * @returns {{success: boolean, error?: Number}} Um objeto indicando sucesso ou erro.
     */
     setHoraInicial(horaInicial) {
 
@@ -84,7 +84,7 @@ export class ConsultaBuilder {
     /**
     * Define o horário final da consulta.
     * @param {string} horaFinal - O horário final no formato "HHmm".
-    * @returns {Object} Um objeto indicando sucesso ou erro.
+    * @returns {{success: boolean, error?: Number}} Um objeto indicando sucesso ou erro.
     */
     setHoraFinal(horaFinal) {
         if (!this.#data_consulta) {
@@ -127,7 +127,7 @@ export class ConsultaBuilder {
 
     /**
     * Cria e retorna uma instância da classe Consulta.
-    * @returns {Object} Um objeto contendo a consulta criada ou um erro, caso os dados estejam incompletos.
+    * @returns {{success: boolean, error?: Number , consulta?: Consulta}} Um objeto contendo a consulta criada ou um erro, caso os dados estejam incompletos.
     */
     build() {
         if (!this.#cpf_paciente || !this.#data_consulta || !this.#hora_inicial || !this.#hora_final) {

@@ -2,8 +2,17 @@ import promptSync from 'prompt-sync';
 const prompt = promptSync({ sigint: true });
 import { ErrorCodes } from '../utils/Error.js';
 
+/**
+ * Classe base para gerenciar a interação com o usuário.
+ * Define métodos genéricos para exibição, leitura e validação de entradas.
+ * Deve ser estendida por outras classes que implementem métodos específicos.
+ */
 export class View{
 
+    /**
+     * Exibe uma mensagem de erro com base no código de erro recebido.
+     * @param {string} erro - O código do erro a ser processado.
+     */
     processarErros(erro) {
         const ErrorToMsg = {
             [ErrorCodes.ERR_CPF_INVALIDO]:                  "Erro: CPF inválido.",
@@ -35,15 +44,31 @@ export class View{
         console.log(ErrorToMsg[erro] || "Erro desconhecido.");
     }
 
+    /**
+     * Exibe a interface da view.
+     * Este método deve ser implementado nas subclasses.
+     * @throws {Error} Erro indicando que o método não foi implementado.
+     */
     show() {
         throw new Error("Método show() deve ser implementado nas subclasses");
     }
 
+     /**
+     * Lê uma opção numérica fornecida pelo usuário.
+     * @param {string} mensagem - A mensagem a ser exibida ao solicitar a entrada.
+     * @returns {number} A opção fornecida pelo usuário.
+     */
     lerOpcao(mensagem) {
         const opcao = parseInt(prompt(mensagem));
         return opcao;
     }
 
+    /**
+     * Valida uma entrada fornecida pelo usuário com um método de validação.
+     * @param {string} mensagem - A mensagem a ser exibida ao solicitar a entrada.
+     * @param {function} metodo - O método de validação a ser aplicado à entrada.
+     * @returns {{success: boolean, entrada: string}} Resultado da validação e a entrada fornecida.
+     */
     validarEntrada(mensagem, metodo){
 
         var entrada = prompt(mensagem);
@@ -55,6 +80,12 @@ export class View{
         return {success: response.success, entrada: entrada};
     }
 
+    /**
+     * Valida uma entrada fornecida pelo usuário em loop até que a entrada seja válida.
+     * @param {string} mensagem - A mensagem a ser exibida ao solicitar a entrada.
+     * @param {function} metodo - O método de validação a ser aplicado à entrada.
+     * @returns {string} A entrada validada fornecida pelo usuário.
+     */
     validarEntradaLoop(mensagem, metodo){
 
         var response = {success: false, error: ""};
@@ -72,11 +103,21 @@ export class View{
         return entrada;
     }
 
+     /**
+     * Processa a opção selecionada pelo usuário.
+     * Este método deve ser implementado nas subclasses.
+     * @param {number} opcao - A opção selecionada pelo usuário.
+     * @throws {Error} Erro indicando que o método não foi implementado.
+     */
     processarOpcao(opcao){
         throw new Error("Método processarOpcao() deve ser implementado nas subclasses");
     }
 
 
+    /**
+     * Loop principal para exibição e processamento das opções da interface.
+     * @returns {string} A tela para onde o usuário será redirecionado.
+     */
     main() {
         var sair = false;
         var mensagem;
