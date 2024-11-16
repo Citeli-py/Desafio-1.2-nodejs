@@ -13,9 +13,11 @@ def simular_entrada(entradas, delay_entre_teclas=0.01, delay_entre_entradas=0.2)
     """
     time.sleep(0.5)  # Tempo para dar tempo de focar no terminal com o código JS
     for entrada in entradas:
-        pyautogui.write(entrada, interval=delay_entre_teclas)  # Digita a entrada
-        #pyautogui.press('enter')  # Pressiona Enter após cada entrada
-        time.sleep(delay_entre_entradas)  # Espera entre as entradas
+        # Ignora comentários
+        if(entrada[0] != '#'):
+            pyautogui.write(entrada, interval=delay_entre_teclas)  # Digita a entrada
+            #pyautogui.press('enter')  # Pressiona Enter após cada entrada
+            time.sleep(delay_entre_entradas)  # Espera entre as entradas
     
     pyautogui.press('enter') 
 
