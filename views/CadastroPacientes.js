@@ -5,7 +5,19 @@ import { View } from './View.js';
 import promptSync from 'prompt-sync';
 const prompt = promptSync({ sigint: true });
 
+/**
+ * Classe `CadastroPacientes` representa a interface para gerenciar as operações relacionadas ao cadastro de pacientes.
+ * Essa classe estende a classe `View` e interage com os controladores `PacienteController` e `ConsultaController`.
+ */
 export class CadastroPacientes extends View {
+
+    /**
+     * Construtor da classe CadastroPacientes.
+     * @param {PacienteController} pacientes_controller - Controlador responsável pelos pacientes.
+     * @param {ConsultaController} consultas_controller - Controlador responsável pelas consultas.
+     * @throws {Error} Se `pacientes_controller` não for uma instância de `PacienteController`.
+     * @throws {Error} Se `consultas_controller` não for uma instância de `ConsultaController`.
+     */
     constructor(pacientes_controller, consultas_controller) {
         super();
 
@@ -21,14 +33,20 @@ export class CadastroPacientes extends View {
         this.consultas_controller = consultas_controller;
     }
 
+    /**
+     * Exibe o menu do módulo de cadastro de pacientes.
+     */
     show() {
         console.log(
-            "Menu do Cadastro de Pacientes \n1 - Cadastrar novo paciente \n2 - Excluir paciente " +
+            "\nMenu do Cadastro de Pacientes \n1 - Cadastrar novo paciente \n2 - Excluir paciente " +
             "\n3 - Listar pacientes (ordenado por CPF) \n4 - Listar pacientes (ordenado por nome) \n5 - Voltar p/ menu principal"
         );
     }
 
-
+    /**
+     * Realiza o cadastro de um novo paciente.
+     * Utiliza o controlador de pacientes para gerenciar os dados e validar as entradas.
+     */
     cadastrarNovoPaciente() {
         console.log("Cadastro de novo paciente:");
         this.pacientes_controller.iniciarNovoPaciente();
@@ -46,6 +64,10 @@ export class CadastroPacientes extends View {
         }
     }
 
+    /**
+     * Exclui um paciente com base no CPF fornecido.
+     * @throws {Error} Caso o CPF seja inválido ou o paciente não seja encontrado.
+     */
     excluirPaciente() {
         const cpf = prompt("CPF: ");
         const resultado = this.pacientes_controller.removePaciente(cpf, this.consultas_controller);
@@ -57,16 +79,27 @@ export class CadastroPacientes extends View {
         }
     }
 
+    /**
+     * Lista os pacientes cadastrados, ordenados por CPF.
+     */
     listarPacientesOrdenadoPorCpf() {
         const lista_pacientes = this.pacientes_controller.getPacientesOrdenadosPorCpf(this.consultas_controller);
         console.log(lista_pacientes)
     }
 
+    /**
+     * Lista os pacientes cadastrados, ordenados por nome.
+     */
     listarPacientesOrdenadoPorNome() {
         const lista_pacientes = this.pacientes_controller.getPacientesOrdenadosPorNome(this.consultas_controller);
         console.log(lista_pacientes)
     }
 
+    /**
+     * Processa a opção selecionada no menu.
+     * @param {number} opcao - Opção selecionada pelo usuário.
+     * @returns { tela: string, sair: boolean}; Objeto contendo o nome da tela e o estado de continuidade.
+     */
     processarOpcao(opcao) {
         switch (opcao) {
             case 1:
