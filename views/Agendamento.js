@@ -60,9 +60,9 @@ export class Agendamento extends View{
 
         const resultado = this.consultas_controller.addConsulta();
         if (resultado.success) {
-            console.log("Paciente cadastrado com sucesso!");
+            console.log("\nAgendamento realizado com sucesso!");
         } else {
-            console.log(resultado.error);
+            this.processarErros(resultado.error);
         }
     }
 
@@ -82,14 +82,14 @@ export class Agendamento extends View{
 
         // COrrigir mensagem de erro. não se pode desmarcar consultas passadas
         const data_consulta = super.validarEntradaLoop("Data da consulta: ", (entrada) => this.consultas_controller.validaData(entrada));
-        const hora_inicial = super.validarEntradaLoop("Hora inicial: ", (entrada) => this.consultas_controller.validaData(entrada));
+        const hora_inicial = super.validarEntradaLoop("Hora inicial: ", (entrada) => this.consultas_controller.validaHoraInicial(entrada));
 
         const resultado = this.consultas_controller.removeConsulta(cpf_valido.entrada, data_consulta, hora_inicial);
 
         if (resultado.success) {
-            console.log("Consulta excluída com sucesso.");
+            console.log("\nAgendamento cancelado com sucesso!");
         } else {
-            console.log(resultado.error);
+            this.processarErros(resultado.error);
         }
     }
 
