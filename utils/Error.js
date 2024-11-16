@@ -65,6 +65,12 @@ export const ErrorCodes = {
     /**Consulta especificada não foi encontrada no sistema. */
     ERR_CONSULTA_NAO_ENCONTRADA:    211, 
 
+    /**Não é possivel agendar duas consultas no mesmo horario */
+    ERR_CONSULTA_SOBREPOSTA:        212,
+
+    /**Não é possivel ter mais de uma consulta futura atrelada a um paciente */
+    ERR_CONSULTA_DUPLA:      213,
+
     // Erros gerais ou específicos adicionais
     /** A data final fornecida é menor que a data inicial.*/
     ERR_DATA_FINAL_MENOR_INICIAL:   300,
