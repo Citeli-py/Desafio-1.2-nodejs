@@ -140,6 +140,7 @@ export class ConsultaBuilder {
         consulta.hora_inicial = this.#hora_inicial;
         consulta.hora_final = this.#hora_final;
 
+        this.clear();
         return { success: true, consulta };
     }
 
