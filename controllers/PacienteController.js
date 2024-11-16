@@ -40,14 +40,14 @@ export class PacienteController{
     * Valida se o CPF é único e válido.
     * 
     * @param {string} cpf - O CPF do paciente a ser validado.
-    * @returns {Object} - Um objeto contendo `success: true` se válido ou um erro com código correspondente.
+    * @returns {{success: boolean, error?: number}} - Um objeto contendo `success: true` se válido ou um erro com código correspondente.
     */
     validaCpf(cpf){
-        if(this.pacientes.has(cpf))
-            return {success: false, error: ErrorCodes.ERR_CPF_DUPLICADO};
-
         if(!this.paciente_builder.validaCpf(cpf))
             return {success: false, error: ErrorCodes.ERR_CPF_INVALIDO};
+
+        if(!this.pacientes.has(cpf))
+            return {success: false, error: ErrorCodes.ERR_PACIENTE_NAO_CADASTRADO};
 
         return { success: true }
     }
@@ -56,7 +56,7 @@ export class PacienteController{
     * Define o CPF no builder e verifica se já existe.
     * 
     * @param {string} cpf - O CPF do paciente.
-    * @returns {Object} - Um objeto contendo `success: true` se válido ou um erro com código correspondente.
+    * @returns {{success: boolean, error?: number}} - Um objeto contendo `success: true` se válido ou um erro com código correspondente.
     */
     setCpf(cpf){
         if(this.pacientes.has(cpf))
@@ -69,7 +69,7 @@ export class PacienteController{
     * Define o nome no builder.
     * 
     * @param {string} nome - O nome do paciente.
-    * @returns {Object} - Um objeto contendo `success: true` se válido ou um erro com código correspondente.
+    * @returns {{success: boolean, error?: number}} - Um objeto contendo `success: true` se válido ou um erro com código correspondente.
     */
     setNome(nome){
         return this.paciente_builder.setNome(nome);
@@ -79,7 +79,7 @@ export class PacienteController{
     * Define a data de nascimento no builder.
     * 
     * @param {string} data - O data de nascimento do paciente.
-    * @returns {Object} - Um objeto contendo `success: true` se válido ou um erro com código correspondente.
+    * @returns {{success: boolean, error?: number}} - Um objeto contendo `success: true` se válido ou um erro com código correspondente.
     */
     setData_nasc(data){
         return this.paciente_builder.setData_nasc(data);
@@ -88,7 +88,7 @@ export class PacienteController{
     /**
     * Finaliza e adiciona o paciente ao registro.
     * 
-    * @returns {Object} - Resultado da operação, indicando sucesso ou erro.
+    * @returns {{success: boolean, error?: number}} - Resultado da operação, indicando sucesso ou erro.
     */
     addPaciente(){
         const paciente = this.paciente_builder.build();
@@ -106,7 +106,7 @@ export class PacienteController{
     * 
     * @param {string} cpf - O CPF do paciente a ser removido.
     * @param {ConsultaController} consulta_controller - Controlador de consultas para verificar agendamentos.
-    * @returns {Object} - Resultado da operação, indicando sucesso ou erro.
+    * @returns {{success: boolean, error?: number}} - Resultado da operação, indicando sucesso ou erro.
     */
     removePaciente(cpf, consulta_controller){
         
