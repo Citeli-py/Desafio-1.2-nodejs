@@ -43,7 +43,7 @@ export class ConsultaController{
     * 
     * @param {string} cpf - CPF do paciente.
     * @param {PacienteController} paciente_controller - Controlador de pacientes para validar o CPF.
-    * @returns {Object} Objeto contendo o status da operação e, em caso de erro, um código de erro.
+    * @returns {{success: boolean, error?: number}} Objeto contendo o status da operação e, em caso de erro, um código de erro.
     */
     setCpf(cpf, paciente_controller){
         if(!paciente_controller.exists(cpf))
@@ -56,7 +56,7 @@ export class ConsultaController{
     * Define a data da consulta.
     * 
     * @param {string} data - Data no formato "dd/MM/yyyy".
-    * @returns {Object} Objeto contendo o status da operação.
+    * @returns {{success: boolean, error?: number}} Objeto contendo o status da operação e, em caso de erro, um código de erro.
     */
     setDataConsulta(data) {
         return this.consulta_builder.setDataConsulta(data);
@@ -66,7 +66,7 @@ export class ConsultaController{
     * Define a hora inicial da consulta.
     * 
     * @param {string} horaInicial - Hora inicial no formato "HHmm".
-    * @returns {Object} Objeto contendo o status da operação.
+    * @returns {{success: boolean, error?: number}} Objeto contendo o status da operação e, em caso de erro, um código de erro.
     */
     setHoraInicial(horaInicial) {
        return this.consulta_builder.setHoraInicial(horaInicial);
@@ -76,27 +76,48 @@ export class ConsultaController{
     * Define a hora final da consulta.
     * 
     * @param {string} horaFinal - Hora final no formato "HHmm".
-    * @returns {Object} Objeto contendo o status da operação.
+    * @returns {{success: boolean, error?: number}} Objeto contendo o status da operação e, em caso de erro, um código de erro.
     */
     setHoraFinal(horaFinal) {
         return this.consulta_builder.setHoraFinal(horaFinal);
     }
 
     /**
+     * Verifica se um consulta sobrepoẽ alguma outra já agendada.
+     * @param {Consulta} consulta - Instância de consulta para ser comparada
+     * @returns {boolean} Retorna true se sobrepõe alguma consulta, senão retorna false
+     */
+    isSobreposta(consulta){
+        for( const [chave, consultas_paciente] of this.consultas.entries())
+            for( const consulta_cadastrada of consultas_paciente)
+                if(consulta.isSobreposta(consulta_cadastrada))
+                    return true;
+
+        return false;
+    }
+
+    /**
     * Finaliza a criação da consulta e a adiciona ao mapa de consultas.
     * 
-    * @returns {Object} Objeto contendo o status da operação e, em caso de erro, um código de erro.
+    * @returns {{success: boolean, error?: number}} Objeto contendo o status da operação e, em caso de erro, um código de erro.
     */
     addConsulta(){
-        const consulta = this.consulta_builder.build();
-        if(!consulta.success)
-            return consulta;
+        const resposta = this.consulta_builder.build();
+        if(!resposta.success)
+            return resposta;
 
-        if(!this.consultas.has(consulta.consulta.cpf_paciente))
-            this.consultas.set(consulta.consulta.cpf_paciente, []);
+        const consulta = resposta.consulta;
 
-        this.consultas.get(consulta.consulta.cpf_paciente).push(consulta.consulta);
-        this.consulta_builder.clear();
+        if(this.hasAgendamentosFuturos(consulta.cpf_paciente))
+            return {success: false, error: ErrorCodes.ERR_CONSULTA_DUPLA};
+
+        if(this.isSobreposta(consulta))
+            return {success: false, error: ErrorCodes.ERR_CONSULTA_SOBREPOSTA};
+
+        if(!this.consultas.has(consulta.cpf_paciente))
+            this.consultas.set(consulta.cpf_paciente, []);
+
+        this.consultas.get(consulta.cpf_paciente).push(consulta);
 
         return {success: true};
     }
@@ -107,18 +128,24 @@ export class ConsultaController{
     * @param {string} cpf - CPF do paciente.
     * @param {string} data_consulta - Data da consulta no formato "dd/MM/yyyy".
     * @param {string} hora_inicial - Hora inicial no formato "HHmm".
-    * @returns {Object} Objeto contendo o status da operação e, em caso de erro, um código de erro.
+    * @returns {{success: boolean, error?: number}} Objeto contendo o status da operação e, em caso de erro, um código de erro.
     */
     removeConsulta(cpf, data_consulta, hora_inicial){
 
         if(!this.consultas.has(cpf))
             return {success: false, error: ErrorCodes.ERR_PACIENTE_NAO_CADASTRADO};
 
+        const agora = DateTime.now();
+        const data_hora_consulta = DateTime.fromFormat(data_consulta+hora_inicial, "dd/MM/yyyyHHmm");
+
+        if(data_hora_consulta.diff(agora).toMillis() <= 0)
+            return {success: false, error: ErrorCodes.ERR_CONSULTA_NAO_ENCONTRADA};
+
         const consultas_paciente = this.consultas.get(cpf);
 
         for (let i = 0; i < consultas_paciente.length; i++) {
             if(data_consulta === consultas_paciente[i].data_consulta.toFormat("dd/MM/yyyy") && consultas_paciente[i].hora_inicial.toFormat("HHmm") === hora_inicial){
-                this.consultas.set(cpf, consultas_paciente.splice(i, 1));
+                consultas_paciente.splice(i, 1);
                 return {success: true};
             }
         }
@@ -130,7 +157,7 @@ export class ConsultaController{
     * Remove todas as consultas de um paciente.
     * 
     * @param {string} cpf - CPF do paciente.
-    * @returns {Object} Objeto contendo o status da operação e, em caso de erro, um código de erro.
+    * @returns {{success: boolean, error?: number}} Objeto contendo o status da operação e, em caso de erro, um código de erro.
     */
     removeConsultasPaciente(cpf){
 
@@ -161,7 +188,7 @@ export class ConsultaController{
     * Lista consultas futuras de um paciente.
     * 
     * @param {string} cpf - CPF do paciente.
-    * @returns {Object} Objeto contendo o status da operação, as consultas futuras ou um código de erro.
+    * @returns {{success: boolean, error?: number, consultas?:Array<Consulta>}} Objeto contendo o status da operação, as consultas futuras ou um código de erro.
     */
     getAgendamentosFuturos(cpf){
         if(!this.consultas.has(cpf))
@@ -262,7 +289,7 @@ export class ConsultaController{
     * Valida o formato da hora inicial.
     * 
     * @param {string} hora_inicial - Hora inicial no formato "HHmm".
-    * @returns {Object} Objeto contendo o status da operação e, em caso de erro, um código de erro.
+    * @returns {{success: boolean, error?: number}} Objeto contendo o status da operação e, em caso de erro, um código de erro.
     */
     validaHoraInicial(hora_inicial){
         const HoraInicial = DateTime.fromFormat(hora_inicial, "HHmm");
@@ -279,7 +306,7 @@ export class ConsultaController{
     * 
     * @param {string} data - Data no formato "dd/MM/yyyy".
     * @param {string} [data_inicial=null] - Data inicial para validação de intervalo.
-    * @returns {Object} Objeto contendo o status da operação e, em caso de erro, um código de erro.
+    * @returns {{success: boolean, error?: number}} Objeto contendo o status da operação e, em caso de erro, um código de erro.
     */
     validaData(data, data_inicial=null){
         const Data = DateTime.fromFormat(data, "dd/MM/yyyy");
