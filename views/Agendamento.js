@@ -4,8 +4,19 @@ import { ConsultaController } from "../controllers/ConsultaController.js";
 
 import { ErrorCodes } from "../utils/Error.js";
 
+/**
+ * Classe `Agendamento` representa a interface para gerenciar as operações relacionadas ao agendamento de consultas.
+ * Essa classe estende a classe `View` e interage com os controladores `PacienteController` e `ConsultaController`.
+ */
 export class Agendamento extends View{
 
+    /**
+     * Construtor da classe Agendamento.
+     * @param {PacienteController} pacientes_controller - Controlador responsável pelos pacientes.
+     * @param {ConsultaController} consultas_controller - Controlador responsável pelas consultas.
+     * @throws {Error} Se `pacientes_controller` não for uma instância de `PacienteController`.
+     * @throws {Error} Se `consultas_controller` não for uma instância de `ConsultaController`.
+     */
     constructor(pacientes_controller, consultas_controller) {
         super();
 
@@ -21,10 +32,17 @@ export class Agendamento extends View{
         this.consultas_controller = consultas_controller;
     }
 
+    /**
+     * Exibe o menu do módulo de agendamento de consultas.
+     */
     show(){
         console.log("\nAgenda \n1-Agendar consulta \n2-Cancelar agendamento \n3-Listar agenda \n4-Voltar p/ menu principal\n");
     }
 
+    /**
+     * Realiza o agendamento de uma nova consulta.
+     * Solicita as informações necessárias do usuário e utiliza o controlador de consultas para validar e salvar os dados.
+     */
     agendarConsulta(){
         this.consultas_controller.iniciarNovaConsulta();
 
@@ -48,6 +66,10 @@ export class Agendamento extends View{
         }
     }
 
+    /**
+     * Cancela um agendamento existente.
+     * Solicita o CPF, data e hora da consulta, validando as informações antes de cancelar.
+     */
     cancelarAgendamento(){
 
         // Esse wrapper serve para conseguir passar o contexto da instância para o método
@@ -71,6 +93,10 @@ export class Agendamento extends View{
         }
     }
 
+    /**
+     * Lista as consultas agendadas.
+     * Permite listar todas as consultas ou filtrar por um período específico.
+     */
     listarAgenda(){
         const opcao = super.validarEntradaLoop("Apresentar a agenda T-Toda ou P-Periodo: ", (entrada) => {
                 if((entrada === 'T') || (entrada === 'P'))
@@ -91,6 +117,11 @@ export class Agendamento extends View{
         console.log(this.consultas_controller.listarConsultas(this.pacientes_controller, true, data_inicial, data_final));
     }
 
+    /**
+     * Processa a opção selecionada no menu.
+     * @param {number} opcao - Opção selecionada pelo usuário.
+     * @returns {{tela: string, sair: boolean}} Objeto contendo o nome da tela e o estado de continuidade.
+     */
     processarOpcao(opcao){
         switch (opcao) {
             case 1:

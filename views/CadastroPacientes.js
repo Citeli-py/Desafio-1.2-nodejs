@@ -98,7 +98,7 @@ export class CadastroPacientes extends View {
     /**
      * Processa a opção selecionada no menu.
      * @param {number} opcao - Opção selecionada pelo usuário.
-     * @returns { tela: string, sair: boolean}; Objeto contendo o nome da tela e o estado de continuidade.
+     * @returns { {tela: string, sair: boolean} }; Objeto contendo o nome da tela e o estado de continuidade.
      */
     processarOpcao(opcao) {
         switch (opcao) {
