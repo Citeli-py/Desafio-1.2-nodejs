@@ -36,12 +36,14 @@ export class View{
             [ErrorCodes.ERR_HORA_SEM_HORA_INICIAL]:         "Erro: sem hora inicial da consulta!",
             [ErrorCodes.ERR_CONSULTA_INCOMPLETA]:           "Erro: faltam dados obrigatórios para criar a consulta.",
             [ErrorCodes.ERR_DATA_FINAL_MENOR_INICIAL]:      "Erro: Data final menor que a inicial.",
+            [ErrorCodes.ERR_CONSULTA_SOBREPOSTA]:           "Erro: já existe uma consulta agendada nesse horário",
+            [ErrorCodes.ERR_CONSULTA_DUPLA]:                "Erro: Paciente já possui uma consulta marcada",
             
             [ErrorCodes.ERR_CONSULTA_NAO_ENCONTRADA]:       "Erro: agendamento não encontrado",
             [ErrorCodes.ERR_ENTRADA_INVALIDA_AGENDA]:       "Entrada deve ser T ou P!",
         };
     
-        console.log(ErrorToMsg[erro] || "Erro desconhecido.");
+        console.log("\n"+ErrorToMsg[erro] || "Erro desconhecido.");
     }
 
     /**
